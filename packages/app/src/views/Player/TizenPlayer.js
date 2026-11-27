@@ -1,4 +1,5 @@
 import {useState, useEffect, useCallback, useRef, useMemo} from 'react';
+import {openFluxerReport} from '../../fluxer/fluxerReport'; // FLUXER
 import Spotlight from '@enact/spotlight';
 import Button from '@enact/sandstone/Button';
 import $L from '@enact/i18n/$L';
@@ -3138,6 +3139,7 @@ const Player = ({item, resume, initialMediaSourceId, initialAudioIndex, initialS
 			case 'zoom': handleToggleZoom(); break;
 			case 'sleep': openModal('sleep'); break;
 			case 'info': openModal('info'); break;
+			case 'fluxerReport': openFluxerReport(item); break; // FLUXER
 			case 'partyChat':
 			case 'party': openModal(action); break;
 			case 'channels': openCarousel(); break;
@@ -3153,7 +3155,7 @@ const Player = ({item, resume, initialMediaSourceId, initialAudioIndex, initialS
 			case 'queue': handleSelectAudioPanel(action); break;
 			default: break;
 		}
-	}, [showControls, handlePlayPause, handleRewind, handleForward, handleJumpToLive, prepareRecording, openModal, offersSecondarySubtitles, handleOpenCast, handleToggleZoom, handleOpenGuide, openCarousel, handlePlayNextNow, handleNextTrack, handlePrevTrack, handleToggleShuffle, handleToggleRepeat, handleToggleFavorite, handleSelectAudioPanel]);
+	}, [showControls, handlePlayPause, handleRewind, handleForward, handleJumpToLive, prepareRecording, openModal, offersSecondarySubtitles, handleOpenCast, handleToggleZoom, handleOpenGuide, openCarousel, handlePlayNextNow, handleNextTrack, handlePrevTrack, handleToggleShuffle, handleToggleRepeat, handleToggleFavorite, handleSelectAudioPanel, item]); // FLUXER: item (Reportar un problema)
 
 	const handleControlButtonClick = useCallback((e) => {
 		const action = e.currentTarget.dataset.action;

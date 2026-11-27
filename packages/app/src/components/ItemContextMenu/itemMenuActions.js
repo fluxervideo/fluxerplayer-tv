@@ -1,4 +1,7 @@
 import $L from '@enact/i18n/$L';
+import {FLUXER_ONLY} from '../../fluxer/fluxerConfig'; // FLUXER
+import {fluxerCanReport} from '../../fluxer/fluxerReport'; // FLUXER
+import {fs} from '../../fluxer/fluxerStrings'; // FLUXER
 
 import {DETAIL_ICON_PATHS} from '../../views/Details/detailIcons';
 
@@ -126,6 +129,11 @@ export const itemMenuActions = (item, {
 
 	if (type === 'Episode' && hasSeries) {
 		actions.push({id: 'goToSeries', icon: DETAIL_ICON_PATHS.series, label: $L('Go to Series')});
+	}
+
+	// FLUXER: «Reportar un problema».
+	if (FLUXER_ONLY && fluxerCanReport(item)) {
+		actions.push({id: 'fluxerReport', icon: MENU_ICON_PATHS.info, label: fs.reportProblem});
 	}
 
 	return actions;

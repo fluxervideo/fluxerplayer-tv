@@ -94,6 +94,7 @@ import FluxerLinkGate from '../fluxer/FluxerLinkGate';
 import {FLUXER_FEATURES, fluxerLibraries} from '../fluxer/fluxerFeatures';
 import FluxerSettingsLock from '../fluxer/FluxerSettingsLock';
 import FluxerHubNotices from '../fluxer/FluxerHubNotices';
+import FluxerReportDialog from '../fluxer/FluxerReportDialog';
 import {fluxerDialogOpen} from '../fluxer/fluxerDialogs';
 import Browse from '../views/Browse';
 import {isGameLibrary, refreshGameLibraries, resolveGameLibraryId} from '../utils/gameLibrary';
@@ -2819,6 +2820,7 @@ const AppContent = (props) => {
 			{/* FLUXER */}
 			{FLUXER_ONLY && <FluxerLinkGate activeRef={fluxerGateRef} onLoggedIn={handleLoggedIn} onSwitchUser={handleSignedOut} />}
 			{FLUXER_ONLY && <FluxerHubNotices hold={panelIndex === PANELS.PLAYER || setupWizardActive || isPinGateActive} />}
+			{FLUXER_ONLY && <FluxerReportDialog />}
 			<AccountModal
 				open={showAccountModal}
 				onClose={handleCloseAccountModal}

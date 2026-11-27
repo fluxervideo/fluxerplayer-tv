@@ -1,5 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import $L from '@enact/i18n/$L';
+import {FLUXER_ONLY} from '../../fluxer/fluxerConfig'; // FLUXER
+import {fs} from '../../fluxer/fluxerStrings'; // FLUXER
 import {autocropLogoUrl} from '../../utils/logoAutocrop';
 import {
 	IconPlay, IconPause, IconSubtitle, IconSubtitleOff, IconAudio,
@@ -141,7 +143,9 @@ export const usePlayerButtons = ({
 			{id: 'quality', icon: <IconQuality />, label: $L('Playback Quality'), action: 'quality', active: selectedQuality != null},
 			{id: 'zoom', icon: <IconZoom />, label: $L('Zoom').concat(` (${zoomModeLabel})`), action: 'zoom', active: zoomModeKey !== 'fit'},
 			{id: 'sleep', icon: <IconSleep />, label: $L('Sleep timer'), action: 'sleep', active: sleepMinutes != null},
-			{id: 'info', icon: <IconInfo />, label: $L('Playback Information'), action: 'info'}
+			{id: 'info', icon: <IconInfo />, label: $L('Playback Information'), action: 'info'},
+			// FLUXER: «Reportar un problema».
+			...(FLUXER_ONLY && !isAudioMode ? [{id: 'fluxerReport', icon: <IconInfo />, label: fs.reportProblem, action: 'fluxerReport'}] : [])
 		], {order: osdOrder, hidden: osdHidden, catalogue: OSD_BUTTONS})];
 	}, [inParty, audioStreams.length, chapters.length, canBrowseEpisodes, subtitleStreams.length, isAudioMode, isLiveTV, selectedQuality, selectedSubtitleIndex, canDownloadRemoteSubtitles, hasCastMembers, zoomModeLabel, zoomModeKey, sleepMinutes, osdOrder, osdHidden, isFavorite, canFavorite, hasLyrics, audioPanel, recordable, recordMark]);
 

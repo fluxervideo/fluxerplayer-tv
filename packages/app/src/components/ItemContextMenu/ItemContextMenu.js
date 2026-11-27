@@ -1,5 +1,6 @@
 import {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import $L from '@enact/i18n/$L';
+import {openFluxerReport} from '../../fluxer/fluxerReport'; // FLUXER
 import Spotlight from '@enact/spotlight';
 import Spottable from '@enact/spotlight/Spottable';
 import SpotlightContainerDecorator from '@enact/spotlight/SpotlightContainerDecorator';
@@ -341,6 +342,9 @@ export const ItemMenuProvider = ({children, onPlay, onOpenItem, backRef}) => {
 				break;
 			case 'goToSeries':
 				onOpenItem(seriesOf(item));
+				break;
+			case 'fluxerReport': // FLUXER
+				openFluxerReport(item);
 				break;
 			default:
 				break;

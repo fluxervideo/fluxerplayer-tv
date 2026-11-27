@@ -119,5 +119,25 @@ export const fs = {
 	inviteHelp: (reward) => (reward > 0
 		? t(`Por cada amigo que se apunte ganas ${reward.toFixed(2).replace('.', ',')} € de saldo.`, `Earn €${reward.toFixed(2)} credit for every friend who joins.`)
 		: t('Compártelo con tus amigos.', 'Share it with your friends.')),
-	inviteTapForQr: t('Pulsa para ver el código QR.', 'Press to see the QR code.')
+	inviteTapForQr: t('Pulsa para ver el código QR.', 'Press to see the QR code.'),
+
+	// Reportar un problema (FluxerReportDialog)
+	reportProblem: t('Reportar un problema', 'Report a problem'),
+	reportWhatHappens: t('¿Qué pasa?', 'What happens?'),
+	reportSending: t('Enviando…', 'Sending…'),
+	reportSent: t('Enviado. Lo revisaremos pronto, gracias.', 'Sent. We will look into it soon, thanks.'),
+	reportFailed: t('No se ha podido enviar. Inténtalo en un momento.', 'Could not send it. Please try again shortly.'),
+	reportNeedsFluxerLogin: t(
+		'Para reportar desde la app, entra con «Entrar con Fluxer». También puedes escribirnos desde tu cuenta.',
+		'To report from the app, use “Sign in with Fluxer”. You can also write to us from your account.'
+	),
+	openSupport: t('Abrir soporte', 'Open support'),
+	symptoms: {
+		wont_start: t('No arranca', "Won't start"),
+		buffering: t('Se queda cargando', 'Keeps loading'),
+		cuts: t('Se corta o se para', 'Cuts out or stops'),
+		bad_quality: t('Se ve mal o pixelado', 'Looks bad or pixelated'),
+		audio: t('Problemas con el sonido o los subtítulos', 'Sound or subtitle problems'),
+		other: t('Otra cosa', 'Something else')
+	}
 };
