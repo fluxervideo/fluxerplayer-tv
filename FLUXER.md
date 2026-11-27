@@ -77,3 +77,25 @@ tiene sesión del Hub.
 
 Tests de Moonfin que fallan: 7 ya fallaban antes; otros 8 (settingsSchema,
 previewRows, settingsLayout) comprueban ajustes que FluxerPlayer oculta.
+
+## Versiones y actualizaciones (OTA)
+
+FluxerPlayer TV tiene **sus propios números** (`fluxer/version.json`). Las
+etiquetas llevan `v` (`v1.0.0`): las de Moonfin sin `v` ya existen en este repo.
+
+- **Publicar una versión** (solo cuando lo decide el dueño del proyecto):
+  1. Subir `version` en `fluxer/version.json` (y `moonfinBase` si se ha
+     fusionado una versión de Moonfin).
+  2. Añadir su sección `## X.Y.Z — título` en `CHANGELOG-FLUXER.md`.
+  3. `git tag vX.Y.Z && git push origin vX.Y.Z`. El workflow «FluxerPlayer TV
+     Release» compila, firma y publica.
+- Lanzarlo a mano solo compila (artefactos de la ejecución), sin publicar.
+- **OTA**: lo instalado en la tele es un cascarón con el cargador de Moonfin
+  (`scripts/ota/`). Al abrir la app mira la última versión publicada aquí,
+  descarga `moonfin-ota-<plataforma>.json/.bin`, comprueba la firma con
+  `fluxer/ota/public.pem` y arranca con ella la próxima vez. Solo cambia el
+  código: si cambia el cascarón (nombre, iconos, `config.xml`, permisos) hay
+  que reinstalar a mano. La versión Legacy de Tizen no lleva OTA.
+- **Clave de firma**: `/home/devilgaia/projects/fluxerplayer-secrets/tv-ota-signing.pem`
+  (fuera del repo), en el secreto `FLUXER_OTA_SIGNING_KEY`. **Si se pierde,
+  las teles instaladas no aceptan más actualizaciones** hasta reinstalar.

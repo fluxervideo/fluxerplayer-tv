@@ -80,6 +80,9 @@ const REPLACEMENTS = [
 	['packages/build-webos/org.moonfin.webos.manifest.json', '"sourceUrl": "https://github.com/Moonfin-Client/Smart-TV"', `"sourceUrl": "${repoUrl}"`],
 	['packages/build-webos/org.moonfin.webos.manifest.json', 'Moonfin_webOS_', `${brand.filePrefix}_webOS_`],
 
+	// OTA: las versiones se publican con etiqueta v<versión> (en este repo ya están las de Moonfin sin «v»).
+	['scripts/ota/loader.js', "return C.url + '/' + version + '/moonfin-ota-'", "return C.url + '/v' + version + '/moonfin-ota-'"],
+
 	// Dentro de la app: avisos de versión nueva y enlaces desde nuestro repo.
 	['packages/app/src/services/versionChecker.js', 'https://api.github.com/repos/Moonfin-Client/Smart-TV/releases', `https://api.github.com/repos/${brand.githubRepo}/releases`],
 	['packages/app/src/views/Settings/settingsSchema.js', 'github.com/Moonfin-Client/Smart-TV', `github.com/${brand.githubRepo}`]

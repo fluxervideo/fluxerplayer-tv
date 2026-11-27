@@ -1,0 +1,118 @@
+# FluxerPlayer TV: una etiqueta vX.Y.Z compila Samsung (Tizen) y LG (webOS)
+# con la marca de FluxerPlayer, firma la actualización OTA y publica la versión
+# con las notas de CHANGELOG-FLUXER.md. Lanzarlo a mano solo compila (los
+# paquetes quedan como artefactos de la ejecución), sin publicar.
+name: FluxerPlayer TV Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write  # publicar en Releases
+
+env:
+  # Las teles buscan la actualización en <url>/v<versión>/ (apply_branding.js).
+  MOONFIN_OTA_URL: https://github.com/${{ github.repository }}/releases/download
+  MOONFIN_OTA_PUBLIC_KEY: fluxer/ota/public.pem
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [tizen, webos]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Check tag matches fluxer/version.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          v="$(node -p "require('./fluxer/version.json').version")"
+          if [ "v$v" != "${GITHUB_REF_NAME}" ]; then
+            echo "La etiqueta ${GITHUB_REF_NAME} no coincide con fluxer/version.json (v$v)"; exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci --force
+
+      # Marca y versión de FluxerPlayer. Ver fluxer/branding.json y fluxer/version.json.
+      - name: Apply FluxerPlayer branding
+        run: node fluxer/apply_branding.js
+
+      # Solo las etiquetas firman la actualización OTA, con una clave que solo tiene CI.
+      - name: Load the OTA signing key
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          KEY: ${{ secrets.FLUXER_OTA_SIGNING_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then echo "Falta el secreto FLUXER_OTA_SIGNING_KEY"; exit 1; fi
+          printf '%s\n' "$KEY" > "$RUNNER_TEMP/ota-signing.pem"
+          echo "MOONFIN_OTA_SIGNING_KEY=$RUNNER_TEMP/ota-signing.pem" >> "$GITHUB_ENV"
+
+      - name: Build Tizen (Regular, Oblong, Legacy)
+        if: matrix.platform == 'tizen'
+        run: npm run build:tizen:all
+
+      - name: Build webOS
+        if: matrix.platform == 'webos'
+        run: npm run build:webos
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.platform }}
+          if-no-files-found: error
+          path: |
+            FluxerPlayer_Tizen_*.wgt
+            FluxerPlayer_webOS_*.ipk
+            moonfin-ota-${{ matrix.platform }}.*
+            packages/build-webos/org.moonfin.webos.manifest.json
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v7
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v="$(node -p "require('./fluxer/version.json').version")"
+          python3 - "$v" > release-notes.md <<'PY'
+          import re, sys
+          v = sys.argv[1]
+          text = open("CHANGELOG-FLUXER.md", encoding="utf-8").read()
+          m = re.search(rf"^## {re.escape(v)}\b(.*?)$\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+          if not m:
+              sys.exit(f"CHANGELOG-FLUXER.md no tiene la sección ## {v}")
+          print(m.group(2).strip())
+          print(f"""
+          ---
+          **Descargas**
+          - Samsung (Tizen): `FluxerPlayer_Tizen_Regular_v{v}.wgt` (teles anteriores a 2017: `Legacy`).
+          - LG (webOS): `FluxerPlayer_webOS_v{v}.ipk`.
+
+          Las teles con FluxerPlayer ya instalado se actualizan solas desde la app.""".replace("\n          ", "\n"))
+          PY
+          title="$(grep -m1 -E "^## ${v//./\\.}\b" CHANGELOG-FLUXER.md | sed 's/^## *//')"
+          # El manifiesto del Homebrew Channel (LG) queda en su carpeta al descargarse.
+          find dist -name 'org.moonfin.webos.manifest.json' -exec mv {} dist/ \;
+          find dist -mindepth 1 -type d -empty -delete
+          ls -la dist
+          gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --latest \
+            --title "FluxerPlayer TV $title" --notes-file release-notes.md
