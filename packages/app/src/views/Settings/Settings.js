@@ -79,6 +79,7 @@ import LibrariesView from './LibrariesView';
 import LibraryOrderView from './LibraryOrderView';
 import SeerrAccountPanel from './SeerrAccountPanel';
 import RommAccountPanel from './RommAccountPanel';
+import FluxerAccountPanel from '../../fluxer/FluxerAccountPanel'; // FLUXER
 import MoonbasePanel from './MoonbasePanel';
 import MoonbaseAddressRow from './MoonbaseAddressRow';
 import {LOG_RENDER_STEP} from './useDiagnosticsLog';
@@ -1352,6 +1353,7 @@ const Settings = ({ onBack, onLibrariesChanged, onRunSetupWizard, onSelectItem, 
 			/>
 		),
 		rommPanel: () => <RommAccountPanel romm={romm} />,
+		fluxerAccount: () => <FluxerAccountPanel />, // FLUXER: Mi cuenta Fluxer
 		aboutHeader: renderAboutHeader,
 		aboutDataActions: renderAboutDataActions,
 		imageCacheActions: renderImageCacheActions,

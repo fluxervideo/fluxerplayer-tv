@@ -12,8 +12,11 @@ import {fs} from './fluxerStrings';
 import qrCss from '../components/ServerMessagesDialog/ServerMessagesDialog.module.less';
 import css from './Fluxer.module.less';
 
-/** `to`: plans, account o support. `fallbackUrl`: sin sesión, la del portal a secas. */
-const FluxerPortalDialog = ({open, to, title, fallbackUrl, onClose}) => {
+/**
+ * `to`: plans, account o support. `fallbackUrl`: si no hay enlace con sesión, la del portal a secas.
+ * Con `url`, ese enlace tal cual (sin pedir uno al Hub).
+ */
+const FluxerPortalDialog = ({open, to, url: directUrl, title, fallbackUrl, onClose}) => {
 	const canvasRef = useRef(null);
 	const [url, setUrl] = useState(null);
 	const [failed, setFailed] = useState(false);
@@ -22,8 +25,12 @@ const FluxerPortalDialog = ({open, to, title, fallbackUrl, onClose}) => {
 	useEffect(() => {
 		if (!open) return undefined;
 		let alive = true;
-		setUrl(null);
 		setFailed(false);
+		if (directUrl) {
+			setUrl(directUrl);
+			return undefined;
+		}
+		setUrl(null);
 		hubPortalLink(to).then((link) => {
 			if (!alive) return;
 			if (link || fallbackUrl) setUrl(link || fallbackUrl);
@@ -32,7 +39,7 @@ const FluxerPortalDialog = ({open, to, title, fallbackUrl, onClose}) => {
 		return () => {
 			alive = false;
 		};
-	}, [open, to, fallbackUrl]);
+	}, [open, to, directUrl, fallbackUrl]);
 
 	useEffect(() => {
 		if (open && url) drawQrCode(canvasRef.current, url);
@@ -47,7 +54,7 @@ const FluxerPortalDialog = ({open, to, title, fallbackUrl, onClose}) => {
 							<canvas ref={canvasRef} className={qrCss.qrCanvas} />
 						</div>
 						<div className={qrCss.qrHint}>{fs.scanWithPhone}</div>
-						<div className={qrCss.qrUrl}>{fs.portalLinkHint}</div>
+						<div className={qrCss.qrUrl}>{directUrl || fs.portalLinkHint}</div>
 					</>
 				)}
 				{!url && !failed && <div className={css.centerLabel}>{fs.portalLoading}</div>}

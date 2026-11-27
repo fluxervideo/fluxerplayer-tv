@@ -83,5 +83,41 @@ export const fs = {
 	portalLinkHint: t('Entrarás ya con tu cuenta. El código vale 10 minutos.', 'You will be signed in already. The code is valid for 10 minutes.'),
 	portalLoading: t('Preparando el enlace…', 'Preparing the link…'),
 	portalFailed: t('No se ha podido preparar el enlace. Inténtalo en un momento.', 'Could not prepare the link. Please try again shortly.'),
-	close: t('Cerrar', 'Close')
+	close: t('Cerrar', 'Close'),
+
+	// Mi cuenta Fluxer (FluxerAccountPanel)
+	fluxerAccount: t('Mi cuenta Fluxer', 'My Fluxer account'),
+	fluxerAccountSubtitle: t('Plan, saldo, renovar e invitar', 'Plan, balance, renew and invite'),
+	fluxerAccountUnavailable: t(
+		'No se ha podido cargar tu cuenta de Fluxer. Revisa la conexión e inténtalo en un momento.',
+		'Could not load your Fluxer account. Check your connection and try again shortly.'
+	),
+	subscriptionActive: t('Activa', 'Active'),
+	noPlan: t('Sin plan', 'No plan'),
+	subscriptionEndsInDays: (days) => {
+		if (days <= 0) return t('Caduca hoy', 'Ends today');
+		if (days === 1) return t('Caduca mañana', 'Ends tomorrow');
+		return t(`Caduca en ${days} días`, `Ends in ${days} days`);
+	},
+	renewsOn: (date) => t(`Se renueva el ${date}`, `Renews on ${date}`),
+	endsOn: (date) => t(`Caduca el ${date}`, `Ends on ${date}`),
+	autoRenewYes: t('Renovación automática', 'Auto-renew on'),
+	autoRenewNo: t('Sin renovación automática', 'Auto-renew off'),
+	availableBalance: t('Saldo disponible', 'Available balance'),
+	money: (value) => t(`${value.toFixed(2).replace('.', ',')} €`, `€${value.toFixed(2)}`),
+	myAccount: t('Mi cuenta', 'My account'),
+	trialNotice: t(
+		'Estás en la prueba gratis. Para seguir cuando acabe, recarga saldo y elige un plan.',
+		'You are on the free trial. To keep watching after it ends, top up your balance and choose a plan.'
+	),
+	noPlanNotice: t(
+		'No tienes un plan activo. Recarga saldo y elige un plan para seguir viendo.',
+		'You have no active plan. Top up your balance and choose a plan to keep watching.'
+	),
+	inviteTitle: t('Tu enlace de invitación', 'Your invite link'),
+	inviteCode: (code) => t(`Tu código de invitación: ${code}`, `Your invite code: ${code}`),
+	inviteHelp: (reward) => (reward > 0
+		? t(`Por cada amigo que se apunte ganas ${reward.toFixed(2).replace('.', ',')} € de saldo.`, `Earn €${reward.toFixed(2)} credit for every friend who joins.`)
+		: t('Compártelo con tus amigos.', 'Share it with your friends.')),
+	inviteTapForQr: t('Pulsa para ver el código QR.', 'Press to see the QR code.')
 };

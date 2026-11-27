@@ -4,6 +4,7 @@
 // revisar si trae funciones nuevas que convenga ocultar aquí.
 
 import {isGameLibrary} from '../utils/gameLibrary';
+import {fs} from './fluxerStrings';
 
 export const FLUXER_FEATURES = {
 	/** Asistente inicial y «Run setup again». */
@@ -76,8 +77,25 @@ const rowHidden = (row) => {
 	return Boolean(feature) && off(feature);
 };
 
-/** El esquema de Ajustes de Moonfin sin lo que FluxerPlayer no tiene. */
-export const fluxerSchema = (schema) => schema.map((category) => ({
+// «Mi cuenta Fluxer», la primera sección de Ajustes (la pinta FluxerAccountPanel).
+const FLUXER_ACCOUNT_CATEGORY = {
+	id: 'fluxerAccount',
+	label: () => fs.fluxerAccount,
+	description: () => fs.fluxerAccountSubtitle,
+	icon: 'account_circle',
+	when: (ctx) => !ctx.settings.kidsModeEnabled,
+	subcategories: [{
+		id: 'fluxerAccount',
+		clean: true,
+		icon: 'account_circle',
+		label: () => fs.fluxerAccount,
+		description: () => fs.fluxerAccountSubtitle,
+		rows: [{kind: 'custom', id: 'fluxerAccountPanel', render: 'fluxerAccount'}]
+	}]
+};
+
+/** El esquema de Ajustes de Moonfin sin lo que FluxerPlayer no tiene, y con «Mi cuenta Fluxer». */
+export const fluxerSchema = (schema) => [FLUXER_ACCOUNT_CATEGORY, ...schema].map((category) => ({
 	...category,
 	subcategories: category.subcategories
 		.filter((sub) => {
