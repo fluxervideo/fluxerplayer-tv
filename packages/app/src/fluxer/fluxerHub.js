@@ -67,3 +67,52 @@ export const hubLogout = async (owner = activeOwner()) => {
 	await appRequest('logout', {method: 'POST', body: {}, owner});
 	await clearHubToken(owner);
 };
+
+// «me» lo piden varias pantallas a la vez (avisos, Mi cuenta): 1 minuto de caché.
+let meCache = null;
+
+/**
+ * Estado del plan, servidor, avisos y URLs del portal del usuario abierto.
+ * Null si la app no está vinculada o no hay conexión.
+ */
+export const hubMe = async ({fresh = false} = {}) => {
+	const owner = activeOwner();
+	const token = await hubToken(owner);
+	if (!token) return null;
+	if (!fresh && meCache && meCache.token === token && Date.now() - meCache.at < 60 * 1000) return meCache.data;
+	const data = await appRequest('me', {owner});
+	meCache = data ? {token, at: Date.now(), data} : null;
+	return data;
+};
+
+/** Marca como leído un aviso global de ventana. */
+export const hubAcknowledgeNotice = (id) => appRequest(`notices/${id}/acknowledge`, {method: 'POST', body: {}});
+
+/**
+ * Enlace al portal con la sesión ya iniciada (un solo uso, 10 min).
+ * `to`: plans, account o support. Null si no está vinculada o sin conexión.
+ */
+export const hubPortalLink = async (to) => {
+	const data = await appRequest('portal-link', {method: 'POST', body: {to}});
+	return data?.url || null;
+};
+
+/**
+ * «Reportar un problema». Devuelve su número en FluxerHub; null si la app ya
+ * no está vinculada. Lanza un error si no se ha podido enviar.
+ */
+export const hubReport = async (report) => {
+	const body = {};
+	Object.keys(report).forEach((key) => {
+		if (report[key] !== undefined && report[key] !== null && report[key] !== '') body[key] = report[key];
+	});
+	const data = await appRequest('reports', {method: 'POST', body, rethrow: true});
+	if (data === null) return null;
+	return Number(data?.id) || 0;
+};
+
+/** «Tendencias de hoy» del servidor de la app: ids de Emby en orden. */
+export const hubTrendingIds = async () => {
+	const data = await appRequest('trending');
+	return Array.isArray(data?.ids) ? data.ids.filter((id) => typeof id === 'string') : [];
+};

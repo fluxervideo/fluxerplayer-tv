@@ -93,6 +93,8 @@ import FluxerLogin from '../fluxer/FluxerLoginScreen';
 import FluxerLinkGate from '../fluxer/FluxerLinkGate';
 import {FLUXER_FEATURES, fluxerLibraries} from '../fluxer/fluxerFeatures';
 import FluxerSettingsLock from '../fluxer/FluxerSettingsLock';
+import FluxerHubNotices from '../fluxer/FluxerHubNotices';
+import {fluxerDialogOpen} from '../fluxer/fluxerDialogs';
 import Browse from '../views/Browse';
 import {isGameLibrary, refreshGameLibraries, resolveGameLibraryId} from '../utils/gameLibrary';
 import {afterHomeReady} from '../utils/homeReady';
@@ -1175,7 +1177,7 @@ const AppContent = (props) => {
 				if (isPinGateActive || isPinChecking || timesUp) {
 					return;
 				}
-				if (fluxerGateRef.current) return; // FLUXER
+				if (fluxerGateRef.current || fluxerDialogOpen()) return; // FLUXER
 
 				if (setupWizardActive) {
 					setupWizardBackRef.current?.();
@@ -2816,6 +2818,7 @@ const AppContent = (props) => {
 			)}
 			{/* FLUXER */}
 			{FLUXER_ONLY && <FluxerLinkGate activeRef={fluxerGateRef} onLoggedIn={handleLoggedIn} onSwitchUser={handleSignedOut} />}
+			{FLUXER_ONLY && <FluxerHubNotices hold={panelIndex === PANELS.PLAYER || setupWizardActive || isPinGateActive} />}
 			<AccountModal
 				open={showAccountModal}
 				onClose={handleCloseAccountModal}

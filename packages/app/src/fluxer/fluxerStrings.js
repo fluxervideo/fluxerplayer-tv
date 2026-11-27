@@ -56,5 +56,32 @@ export const fs = {
 	autoLoginTitle: t('Al abrir la app', 'When the app opens'),
 	autoLoginLastUser: t('Entrar con el último usuario', 'Continue as the last user'),
 	autoLoginThisUser: t('Entrar con este usuario', 'Continue as this user'),
-	autoLoginAsk: t('Preguntar quién va a ver', 'Ask who is watching')
+	autoLoginAsk: t('Preguntar quién va a ver', 'Ask who is watching'),
+
+	// Avisos de la cuenta (FluxerHubNotices)
+	later: t('Más tarde', 'Later'),
+	ok: t('Entendido', 'OK'),
+	renew: t('Renovar', 'Renew'),
+	choosePlan: t('Elegir plan', 'Choose a plan'),
+	planTitle: t('Tu plan de Fluxer', 'Your Fluxer plan'),
+	planNotActive: (label) => t(
+		`Tu plan está «${label}». Renuévalo para seguir viendo Fluxer.`,
+		`Your plan is “${label}”. Renew it to keep watching Fluxer.`
+	),
+	planEndsSoon: (date, days) => (days <= 1
+		? t(`Tu plan caduca hoy o mañana (${date}). Renuévalo para no quedarte sin Fluxer.`, `Your plan ends today or tomorrow (${date}). Renew it to keep watching.`)
+		: t(`Tu plan caduca en ${days} días (${date}). Renuévalo para no quedarte sin Fluxer.`, `Your plan ends in ${days} days (${date}). Renew it to keep watching.`)),
+	serverIncidentTitle: t('Incidencia en tu servidor', 'Problem with your server'),
+	serverIncident: (name) => t(
+		`Estamos teniendo problemas con ${name}. Ya lo estamos arreglando: si algo no carga, inténtalo en un rato.`,
+		`We are having problems with ${name}. We are already fixing it: if something does not load, try again shortly.`
+	),
+	yourServer: t('tu servidor', 'your server'),
+
+	// Portal por QR (FluxerPortalDialog)
+	scanWithPhone: t('Escanéalo con la cámara del móvil', 'Scan it with your phone camera'),
+	portalLinkHint: t('Entrarás ya con tu cuenta. El código vale 10 minutos.', 'You will be signed in already. The code is valid for 10 minutes.'),
+	portalLoading: t('Preparando el enlace…', 'Preparing the link…'),
+	portalFailed: t('No se ha podido preparar el enlace. Inténtalo en un momento.', 'Could not prepare the link. Please try again shortly.'),
+	close: t('Cerrar', 'Close')
 };
