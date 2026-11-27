@@ -62,7 +62,16 @@ const HIDDEN_ROWS = {
 	screensaverDuringAudio: 'music'
 };
 
+// Opciones que fija FluxerSettingsLock (y lo que solo sirve para cambiarlas): no salen.
+const LOCKED_ROWS = new Set([
+	'navbarPosition', 'navbarAlwaysExpanded', 'maxBitrate', 'maxVideoResolution', 'mergeRecentRowsByType',
+	'featuredBarStyle', 'homeRowsStyle',
+	// Las filas de inicio son las de Emby.
+	'homeRows', 'externalSources', 'imdbLists', 'externalTmdbLists', 'seasonalRow', 'externalCustomRows'
+]);
+
 const rowHidden = (row) => {
+	if (LOCKED_ROWS.has(row.id) || LOCKED_ROWS.has(row.key)) return true;
 	const feature = HIDDEN_ROWS[row.id] || HIDDEN_ROWS[row.key];
 	return Boolean(feature) && off(feature);
 };

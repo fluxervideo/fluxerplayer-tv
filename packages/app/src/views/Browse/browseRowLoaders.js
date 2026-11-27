@@ -2,6 +2,7 @@
 // straight to appendRows, so a slow one only holds up its own row rather than the screen.
 
 import $L from '@enact/i18n/$L';
+import {fluxerRowItems} from '../../fluxer/fluxerHome'; // FLUXER
 import {scopedGetItems} from '../../services/libraryScope';
 import {genericCollectionLabel, mergeRecentRows} from '../../utils/mergeRecentRows';
 import {latestMediaFetchLimitForCollection, normalizeLatestMediaItems} from '../../utils/latestMediaRowNormalizer';
@@ -572,6 +573,7 @@ const loadPickedRowItems = async (ctx, api, row, limit) => {
 	const {settings} = ctx;
 	// Silo sends a section's whole row at once, in its own order, and counts it.
 	if (row.source === 'server') return (await api.getServerHomeSectionItems(row.itemId, limit)) || {Items: []};
+	if (row.source === 'fluxer') return fluxerRowItems(api, row, limit); // FLUXER: sección de inicio de Emby
 	if (row.source === 'collections') {
 		return {Items: await loadCollectionRowItems(api, row.itemId, {
 			limit,

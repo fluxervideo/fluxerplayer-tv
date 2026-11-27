@@ -92,6 +92,7 @@ import FluxerStart from '../fluxer/FluxerStart';
 import FluxerLogin from '../fluxer/FluxerLoginScreen';
 import FluxerLinkGate from '../fluxer/FluxerLinkGate';
 import {FLUXER_FEATURES, fluxerLibraries} from '../fluxer/fluxerFeatures';
+import FluxerSettingsLock from '../fluxer/FluxerSettingsLock';
 import Browse from '../views/Browse';
 import {isGameLibrary, refreshGameLibraries, resolveGameLibraryId} from '../utils/gameLibrary';
 import {afterHomeReady} from '../utils/homeReady';
@@ -3002,6 +3003,8 @@ export const localeStringsReady = Promise.all(
 const AppBase = (props) => (
 	<SettingsProvider>
 		<AuthProvider>
+			{/* FLUXER: opciones fijadas en cuentas de Fluxer */}
+			<FluxerSettingsLock>
 			<SeerrProvider>
 				<AchievementsProvider>
 					<ServerMessagesProvider>
@@ -3011,6 +3014,7 @@ const AppBase = (props) => (
 					</ServerMessagesProvider>
 				</AchievementsProvider>
 			</SeerrProvider>
+			</FluxerSettingsLock>
 		</AuthProvider>
 	</SettingsProvider>
 );

@@ -7,7 +7,9 @@ export const PICK_SOURCES = {
 	playlists: {section: 'playlist', gate: 'displayPlaylistsRows'},
 	// A Silo home section (Recommended for you, Seasonal picks and the rest), by its id, or as Moonbase's admin defaults
 	// name one, `type:<section type>`, which stands for the profile's first section of that type. Silo only.
-	server: {section: 'server', gate: null}
+	server: {section: 'server', gate: null},
+	// FLUXER: secciones de inicio de Emby en cuentas de Fluxer (fluxer/fluxerHome.js).
+	fluxer: {section: 'fluxer', gate: null}
 };
 
 export const isServerSectionRow = (row) => Boolean(row && row.source === 'server' && row.itemId);
@@ -59,6 +61,7 @@ export const isSeerrSliderRow = (row) => Boolean(row && row.source === 'seerr' &
 export const isPickedRowShown = (row, settings, currentServerUrl, serverType) => {
 	// Moonbase's defaults leave the server off a section-type row: it stands for whichever Silo the profile is on.
 	if (row.source === 'server') return serverType === 'silo' && (!row.serverUrl || isSameServer(row.serverUrl, currentServerUrl));
+	if (row.source === 'fluxer') return isSameServer(row.serverUrl, currentServerUrl); // FLUXER
 	if (!settings[PICK_SOURCES[row.source].gate]) return false;
 	if (isSameServer(row.serverUrl, currentServerUrl)) return true;
 	return row.source === 'collections' && settings.unifiedLibraryMode === true;

@@ -56,6 +56,19 @@ Moonfin). El código de Moonfin no se borra, solo se ocultan sus entradas.
 **Al fusionar una versión nueva, revisar si Moonfin ha añadido funciones
 nuevas** que convenga ocultar.
 
+## Opciones fijadas en cuentas de Fluxer
+
+`packages/app/src/fluxer/FluxerSettingsLock.js`: con un usuario que entró con
+Fluxer, la app se dibuja como si esas opciones estuvieran guardadas
+(`SettingsOverride` de Moonfin; lo guardado no se toca). Ahora: barra lateral
+izquierda, 200 Mbps, resolución automática, barra de medios de Moonfin, filas
+en carrusel, sin fusionar filas recientes, y **filas de inicio = secciones de
+inicio de Emby** (`fluxerHome.js`: resume, nextup, mis medios y últimos →
+filas de Moonfin; boxset, collections e items → filas «de Fluxer» con el
+nombre, contenido y orden de Emby; se leen al entrar y cada 30 min). En
+Ajustes no salen (`LOCKED_ROWS` de `fluxerFeatures.js`). Para fijar otra:
+añadirla a `FLUXER_LOCKED` y a `LOCKED_ROWS`.
+
 ## Entrar con Fluxer
 
 `packages/app/src/fluxer/`: la app pide un código a FluxerHub, el cliente lo
@@ -73,10 +86,11 @@ tiene sesión del Hub.
 | `packages/app/src/context/AuthContext.js` | sin «Siempre autenticar» |
 | `packages/app/src/context/SeerrContext.js` | sin Seerr |
 | `packages/app/src/context/AchievementsContext.js` | sin logros |
-| `packages/app/src/views/Settings/settingsSchema.js`, `settingsOptions.js` | «Al abrir la app»; sin las funciones ocultas (`fluxerSchema`) |
+| `packages/app/src/views/Settings/settingsSchema.js`, `settingsOptions.js` | «Al abrir la app»; sin las funciones ocultas ni las opciones fijadas (`fluxerSchema`) |
+| `packages/app/src/utils/pickedRows.js`, `views/Browse/browseRowLoaders.js` | fuente de filas `fluxer` (secciones de inicio de Emby) |
 
-Tests de Moonfin que fallan: 7 ya fallaban antes; otros 8 (settingsSchema,
-previewRows, settingsLayout) comprueban ajustes que FluxerPlayer oculta.
+Tests de Moonfin que fallan: 7 ya fallaban antes; los demás (settingsSchema,
+previewRows, settingsLayout, setupSteps) comprueban ajustes que FluxerPlayer oculta.
 
 ## Versiones y actualizaciones (OTA)
 
