@@ -69,6 +69,22 @@ nombre, contenido y orden de Emby; se leen al entrar y cada 30 min). En
 Ajustes no salen (`LOCKED_ROWS` de `fluxerFeatures.js`). Para fijar otra:
 añadirla a `FLUXER_LOCKED` y a `LOCKED_ROWS`.
 
+## FluxerHub desde la app
+
+Con el token propio del Hub (`fluxerHub.js`, solo `/api/app/*`):
+- `FluxerHubNotices`: al abrir la app y cada 30 min, avisos del plan (no
+  activo o caduca en ≤5 días sin renovarse solo; una vez al día),
+  incidencias del servidor (cada 6 h), mantenimientos (una vez cada uno) y
+  avisos globales de ventana (`fluxerNotices.js`).
+- `FluxerPortalDialog`: el portal con la sesión ya iniciada
+  (`api/app/portal-link`) como QR para el móvil. Lo usan «Renovar», «Mi
+  cuenta» y el soporte.
+- Ajustes → «Mi cuenta Fluxer» (`FluxerAccountPanel`): plan, saldo,
+  servidor, renovar e Invita y gana.
+- «Reportar un problema» (`FluxerReportDialog`) en el menú de cada título y
+  en el reproductor.
+- «Tendencias de hoy» en la barra de inicio (`fluxerTrending.js`).
+
 ## Entrar con Fluxer
 
 `packages/app/src/fluxer/`: la app pide un código a FluxerHub, el cliente lo
@@ -88,9 +104,13 @@ tiene sesión del Hub.
 | `packages/app/src/context/AchievementsContext.js` | sin logros |
 | `packages/app/src/views/Settings/settingsSchema.js`, `settingsOptions.js` | «Al abrir la app»; sin las funciones ocultas ni las opciones fijadas (`fluxerSchema`) |
 | `packages/app/src/utils/pickedRows.js`, `views/Browse/browseRowLoaders.js` | fuente de filas `fluxer` (secciones de inicio de Emby) |
+| `packages/app/src/views/Browse/useBrowseData.js` | barra de inicio con «Tendencias de hoy» (`fluxerTrending.js`) |
+| `packages/app/src/views/Settings/Settings.js` | panel «Mi cuenta Fluxer» (`FluxerAccountPanel`) |
+| `packages/app/src/components/ItemContextMenu/itemMenuActions.js`, `ItemContextMenu.js`, `views/Player/playerOsd.js`, `TizenPlayer.js`, `WebOSPlayer.js` | «Reportar un problema» |
 
 Tests de Moonfin que fallan: 7 ya fallaban antes; los demás (settingsSchema,
-previewRows, settingsLayout, setupSteps) comprueban ajustes que FluxerPlayer oculta.
+previewRows, settingsLayout, setupSteps, itemMenuActions) comprueban ajustes
+o menús que FluxerPlayer oculta o amplía.
 
 ## Versiones y actualizaciones (OTA)
 

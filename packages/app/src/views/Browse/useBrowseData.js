@@ -1,5 +1,7 @@
 import {useCallback, useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import {retainPermitted} from '../../services/libraryScope';
+import {FLUXER_ONLY} from '../../fluxer/fluxerConfig'; // FLUXER
+import {fluxerTrendingBarItems} from '../../fluxer/fluxerTrending'; // FLUXER
 import {isKidsMode, mergesContinueWatchingNextUp} from '../../utils/kidsMode';
 import {isLiveTvLibrary, librariesForNav} from '../../utils/liveTvLibrary';
 import $L from '@enact/i18n/$L';
@@ -177,9 +179,12 @@ const useBrowseData = ({
 			let items = [];
 			const count = s.featuredItemCount;
 
+			// FLUXER: en cuentas de Fluxer, «Tendencias de hoy» en su orden.
+			if (FLUXER_ONLY) items = await fluxerTrendingBarItems(api);
+
 			// Lists picked on their own fill the bar alone. When they come back empty the bar
 			// falls back to what it shows with nothing picked.
-			if (externalIds.length > 0 && !hasSourceFilter) {
+			if (items.length === 0 && externalIds.length > 0 && !hasSourceFilter) { // FLUXER: items.length === 0
 				items = await mixInExternal([]);
 			}
 
