@@ -1,4 +1,5 @@
 import {createContext, useContext, useState, useEffect, useCallback, useRef} from 'react';
+import {FLUXER_FEATURES} from '../fluxer/fluxerFeatures'; // FLUXER
 import * as seerrApi from '../services/seerrApi';
 import {getFromStorage, saveToStorage, removeFromStorage} from '../services/storage';
 import {useSettings} from './SettingsContext';
@@ -414,7 +415,8 @@ export const SeerrProvider = ({children}) => {
 	return (
 		<SeerrContext.Provider value={{
 			// Most Plex servers have no Moonbase for Plex, and Seerr only comes through one that answered.
-			isEnabled: isEnabled && (authServerType !== 'plex' || Boolean(pluginInfo)),
+			// FLUXER: sin Seerr.
+			isEnabled: FLUXER_FEATURES.seerr && isEnabled && (authServerType !== 'plex' || Boolean(pluginInfo)),
 			isAuthenticated,
 			isLoading,
 			user,

@@ -1,4 +1,5 @@
 import {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {FLUXER_FEATURES} from '../fluxer/fluxerFeatures'; // FLUXER
 
 import * as achievementsApi from '../services/achievementsApi';
 import {sameUserId, threadHasNewFromOthers} from '../utils/achievementsModel';
@@ -59,6 +60,7 @@ export const AchievementsProvider = ({children}) => {
 		openConversationRef.current = null;
 		messageNotificationsRef.current = true;
 		if (!isAuthenticated || !serverUrl || !accessToken) return undefined;
+		if (!FLUXER_FEATURES.achievements) return undefined; // FLUXER: sin logros
 
 		let cancelled = false;
 		afterHomeReady().then(() => (cancelled ? false : achievementsApi.probe())).then((available) => {

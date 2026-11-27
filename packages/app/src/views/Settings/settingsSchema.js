@@ -1,6 +1,7 @@
 import $L from '@enact/i18n/$L';
 import {FLUXER_ONLY} from '../../fluxer/fluxerConfig'; // FLUXER
 import {fs} from '../../fluxer/fluxerStrings'; // FLUXER
+import {fluxerSchema} from '../../fluxer/fluxerFeatures'; // FLUXER
 import {isSignInPinEnabled} from '../../utils/signInPin';
 import {isTrickplayOn} from '../../utils/trickplayLayout';
 import {mediaPreviewMode, mediaPreviewSettings} from '../../utils/mediaPreviewMode';
@@ -260,7 +261,8 @@ const pickedLabels = (picked, options, emptyLabel) => {
 	return labels.length > 0 ? labels.join(', ') : emptyLabel;
 };
 
-export const SETTINGS_SCHEMA = [
+// FLUXER: sin las funciones que FluxerPlayer no tiene (fluxerFeatures.js).
+export const SETTINGS_SCHEMA = fluxerSchema([
 	{
 		id: 'account',
 		when: (ctx) => !ctx.settings.kidsModeEnabled,
@@ -1458,7 +1460,7 @@ export const SETTINGS_SCHEMA = [
 			}
 		]
 	}
-];
+]);
 
 export const SCHEMA_BY_KEY = SETTINGS_SCHEMA.reduce((acc, category) => {
 	category.subcategories.forEach((sub) => {

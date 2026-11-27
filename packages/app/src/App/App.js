@@ -91,6 +91,7 @@ import {FLUXER_ONLY} from '../fluxer/fluxerConfig';
 import FluxerStart from '../fluxer/FluxerStart';
 import FluxerLogin from '../fluxer/FluxerLoginScreen';
 import FluxerLinkGate from '../fluxer/FluxerLinkGate';
+import {FLUXER_FEATURES, fluxerLibraries} from '../fluxer/fluxerFeatures';
 import Browse from '../views/Browse';
 import {isGameLibrary, refreshGameLibraries, resolveGameLibraryId} from '../utils/gameLibrary';
 import {afterHomeReady} from '../utils/homeReady';
@@ -634,7 +635,7 @@ const AppContent = (props) => {
 		let cancelled = false;
 		(async () => {
 			const activeServer = await getActiveServer().catch(() => null);
-			const run = await shouldRunSetupWizard(activeServer?.id, serverUrl, user.Id);
+			const run = FLUXER_FEATURES.setupWizard && await shouldRunSetupWizard(activeServer?.id, serverUrl, user.Id); // FLUXER: sin asistente
 			if (!cancelled && run) setSetupWizardActive(true);
 		})();
 		return () => {
@@ -703,7 +704,7 @@ const AppContent = (props) => {
 					const result = await api.getLibraries();
 					libs = result.Items || [];
 				}
-				setLibraries(libs);
+				setLibraries(fluxerLibraries(libs)); // FLUXER: sin libros, música ni juegos
 				// Warm the plugin's game library list so selecting a tile can tell a game
 				// library from a normal one without waiting on a request.
 				afterHomeReady().then(refreshGameLibraries);
