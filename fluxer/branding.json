@@ -1,0 +1,12 @@
+{
+  "_comment": "Marca de FluxerPlayer TV. La aplica fluxer/apply_branding.js antes de compilar; los ficheros de Moonfin no se cambian en git. OJO: tizenPackageId, tizenAppName, tizenWidgetId y webosAppId identifican la app instalada en las teles: cambiarlos obliga a reinstalar en todas.",
+  "appName": "FluxerPlayer",
+  "publisher": "Fluxer",
+  "description": "Cliente de Fluxer para Smart TV",
+  "tizenWidgetId": "https://fluxer.video/tv",
+  "tizenPackageId": "FluxerPlay",
+  "tizenAppName": "FluxerPlayer",
+  "webosAppId": "video.fluxer.player",
+  "filePrefix": "FluxerPlayer",
+  "githubRepo": "fluxervideo/fluxerplayer-tv"
+}

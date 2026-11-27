@@ -1,0 +1,5 @@
+{
+  "_comment": "Versión de FluxerPlayer TV (propia, independiente de Moonfin) y versión de Moonfin Smart-TV sobre la que está montada. La aplica fluxer/apply_branding.js al compilar. Para publicar: actualizar esto y CHANGELOG-FLUXER.md, y crear la etiqueta v<version>.",
+  "version": "1.0.0",
+  "moonfinBase": "3.1.1"
+}
