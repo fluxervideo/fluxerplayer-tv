@@ -36,12 +36,18 @@ const Avatar = ({item}) => {
 
 // Each item is {key, id, name, imageUrl, badge: 'active' | 'pin', lines: [{text, accent, lock}], removable}.
 // The whole strip is one focus stop: Left and Right move along it and OK opens the one in the middle.
-const ProfileCarousel = ({items, initialIndex = 0, spotlightId, onActivate, onRemove}) => {
+// FLUXER: onSelect avisa del perfil que queda en medio («Quitar este usuario» con el mando).
+const ProfileCarousel = ({items, initialIndex = 0, spotlightId, onActivate, onRemove, onSelect}) => {
 	const [index, setIndex] = useState(initialIndex);
 	const [reach, setReach] = useState(2);
 	const stageRef = useRef(null);
 	const selected = clampIndex(index, items.length);
 	const current = items[selected];
+
+	// FLUXER: perfil en medio.
+	useEffect(() => {
+		onSelect?.(current, selected);
+	}, [current, selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const measure = useCallback(() => {
 		const node = stageRef.current;

@@ -10,6 +10,10 @@ import {CoreAlertDialog, useDialogLayer, portal} from '../CoreDialog';
 import ProfileCarousel, {PillButton, PillRow} from '../ProfileCarousel';
 import {BRAND_NAMES} from '../../views/Login/loginIcons';
 
+// FLUXER: solo usuarios de Fluxer; cerrar sesión los desvincula del Hub.
+import {FLUXER_ONLY} from '../../fluxer/fluxerConfig';
+import {forgetFluxerUser, ownerOf, useFluxerSignOut, useFluxerSignOutAll, useFluxerUsers} from '../../fluxer/fluxerAccounts';
+
 import css from './AccountModal.module.less';
 
 const AccountModal = ({
@@ -28,12 +32,19 @@ const AccountModal = ({
 		switchUser,
 		removeUser,
 		hasMultipleUsers,
-		startAddServerFlow
+		startAddServerFlow,
+		loadServers
 	} = useAuth();
+	// FLUXER
+	const fluxerOwners = useFluxerUsers();
+	const fluxerSignOut = useFluxerSignOut();
+	const fluxerSignOutAll = useFluxerSignOutAll();
 	const {settings} = useSettings();
 
 	const sortedServers = useMemo(() => {
-		const list = Array.isArray(servers) ? [...servers] : [];
+		// FLUXER: solo los usuarios que entraron con Fluxer.
+		const list = (Array.isArray(servers) ? servers : [])
+			.filter((entry) => !FLUXER_ONLY || Boolean(fluxerOwners?.has(ownerOf(entry))));
 		const sortBy = settings.serverSortBy || 'name';
 		if (sortBy === 'recent') {
 			return list.sort((a, b) => {
@@ -56,7 +67,7 @@ const AccountModal = ({
 			if (serverCompare !== 0) return serverCompare;
 			return (a.username || '').localeCompare(b.username || '', undefined, {sensitivity: 'base'});
 		});
-	}, [servers, settings.serverSortBy]);
+	}, [servers, settings.serverSortBy, fluxerOwners]);
 
 	const [serverToRemove, setServerToRemove] = useState(null);
 	const [refocusAfterRemove, setRefocusAfterRemove] = useState(false);
@@ -72,16 +83,16 @@ const AccountModal = ({
 	}, [open, serverToRemove, refocusAfterRemove]);
 
 	const handleLogout = useCallback(async () => {
-		await logout();
+		await (FLUXER_ONLY ? fluxerSignOut() : logout()); // FLUXER
 		onClose?.();
 		onLogout?.();
-	}, [logout, onClose, onLogout]);
+	}, [logout, fluxerSignOut, onClose, onLogout]);
 
 	const handleLogoutAll = useCallback(async () => {
-		await logoutAll();
+		await (FLUXER_ONLY ? fluxerSignOutAll() : logoutAll()); // FLUXER
 		onClose?.();
 		onLogout?.();
-	}, [logoutAll, onClose, onLogout]);
+	}, [logoutAll, fluxerSignOutAll, onClose, onLogout]);
 
 	const handleAddUser = useCallback(() => {
 		onClose?.();
@@ -113,12 +124,28 @@ const AccountModal = ({
 
 	const handleConfirmRemove = useCallback(async () => {
 		if (!serverToRemove) return;
+		// FLUXER: quitar el abierto es cerrar su sesión; otro, quitarlo del aparato sin cambiar de usuario.
+		if (FLUXER_ONLY) {
+			const isActive = activeServerInfo?.serverId === serverToRemove.serverId && activeServerInfo?.userId === serverToRemove.userId;
+			setServerToRemove(null);
+			if (isActive) {
+				await fluxerSignOut();
+				onClose?.();
+				onLogout?.();
+				return;
+			}
+			const entry = (servers || []).find((s) => s.serverId === serverToRemove.serverId && s.userId === serverToRemove.userId);
+			if (entry) await forgetFluxerUser(entry);
+			await loadServers();
+			setRefocusAfterRemove(true);
+			return;
+		}
 		const success = await removeUser(serverToRemove.serverId, serverToRemove.userId);
 		if (success) {
 			setServerToRemove(null);
 			setRefocusAfterRemove(true);
 		}
-	}, [serverToRemove, removeUser]);
+	}, [serverToRemove, removeUser, activeServerInfo, fluxerSignOut, servers, loadServers, onClose, onLogout]);
 
 	const handleCancelRemove = useCallback(() => {
 		setServerToRemove(null);
@@ -181,18 +208,27 @@ const AccountModal = ({
 						</div>
 
 						<PillRow>
+							{/* FLUXER: otro usuario se añade desde «¿Quién va a ver?» */}
+							{!FLUXER_ONLY && (
+								<PillButton
+									icon="person"
+									onClick={handleAddUser}
+									data-spotlight-id="account-add-user"
+									data-selected={items.length === 0 ? 'true' : undefined}
+								>
+									{$L('Add User')}
+								</PillButton>
+							)}
+							{!FLUXER_ONLY && (
+								<PillButton icon="home" onClick={handleSelectServer} data-spotlight-id="account-add-server">
+									{$L('Select Server')}
+								</PillButton>
+							)}
 							<PillButton
-								icon="person"
-								onClick={handleAddUser}
-								data-spotlight-id="account-add-user"
-								data-selected={items.length === 0 ? 'true' : undefined}
+								onClick={handleLogout}
+								data-spotlight-id="account-logout"
+								data-selected={FLUXER_ONLY && items.length === 0 ? 'true' : undefined}
 							>
-								{$L('Add User')}
-							</PillButton>
-							<PillButton icon="home" onClick={handleSelectServer} data-spotlight-id="account-add-server">
-								{$L('Select Server')}
-							</PillButton>
-							<PillButton onClick={handleLogout} data-spotlight-id="account-logout">
 								{$L('Sign Out')}
 							</PillButton>
 							{othersBesideSignOut && (

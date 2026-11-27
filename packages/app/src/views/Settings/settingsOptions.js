@@ -1,4 +1,6 @@
 import $L from '@enact/i18n/$L';
+import {FLUXER_ONLY} from '../../fluxer/fluxerConfig'; // FLUXER
+import {fs} from '../../fluxer/fluxerStrings'; // FLUXER
 import {SUBTITLE_FONTS} from '../../services/subtitleFonts';
 
 import {PLAYBACK_TIME_DISPLAYS, PLAYBACK_TIME_SLOTS} from '../../utils/playbackTimeLabels';
@@ -537,11 +539,16 @@ export const getOledModeOptions = () => [
 	{ value: 'vivid', label: $L('Vivid') }
 ];
 
-export const getAutoLoginOptions = () => [
+// FLUXER: con los textos de Fluxer.
+export const getAutoLoginOptions = () => (FLUXER_ONLY ? [
+	{ value: 'lastUser', label: fs.autoLoginLastUser },
+	{ value: 'currentUser', label: fs.autoLoginThisUser },
+	{ value: 'disabled', label: fs.autoLoginAsk }
+] : [
 	{ value: 'disabled', label: $L('Disabled') },
 	{ value: 'lastUser', label: $L('Last User') },
 	{ value: 'currentUser', label: $L('Current User') }
-];
+]);
 
 export const getResumeRewindOptions = () => [
 	{ value: '0', label: $L('Disabled') },

@@ -86,6 +86,11 @@ import {buildThemeCssVars, resolveFocusBorderColor, toRgbTriplet} from '../theme
 import {applyThemeOverrides} from '../theme/themeOverrides';
 import {resolveOverlayColor} from '../theme/overlayColors';
 import Login from '../views/Login';
+// FLUXER: entrar con Fluxer en vez de las pantallas de Moonfin.
+import {FLUXER_ONLY} from '../fluxer/fluxerConfig';
+import FluxerStart from '../fluxer/FluxerStart';
+import FluxerLogin from '../fluxer/FluxerLoginScreen';
+import FluxerLinkGate from '../fluxer/FluxerLinkGate';
 import Browse from '../views/Browse';
 import {isGameLibrary, refreshGameLibraries, resolveGameLibraryId} from '../utils/gameLibrary';
 import {afterHomeReady} from '../utils/homeReady';
@@ -377,6 +382,7 @@ const AppContent = (props) => {
 	const setupWizardBackRef = useRef(null);
 	const cleanupHandlersRef = useRef(null);
 	const backHandlerRef = useRef(null);
+	const fluxerGateRef = useRef(false); // FLUXER: «Vuelve a entrar con Fluxer» tapa la app
 	const itemMenuBackRef = useRef(null);
 	const detailsItemStackRef = useRef([]);
 	// Play from a card's menu opens the item's screen, which starts it once it knows what to play.
@@ -1167,6 +1173,7 @@ const AppContent = (props) => {
 				if (isPinGateActive || isPinChecking || timesUp) {
 					return;
 				}
+				if (fluxerGateRef.current) return; // FLUXER
 
 				if (setupWizardActive) {
 					setupWizardBackRef.current?.();
@@ -2477,7 +2484,10 @@ const AppContent = (props) => {
 				<Suspense fallback={<PanelLoader />}>
 					<Panels index={panelIndex} noCloseButton noAnimation>
 						<Panel>
-							<Login onLoggedIn={handleLoggedIn} backHandlerRef={backHandlerRef} />
+							{/* FLUXER: «¿Quién va a ver?» / código de Fluxer, solo mientras se ve */}
+							{FLUXER_ONLY
+								? panelIndex === PANELS.LOGIN && <FluxerStart onLoggedIn={handleLoggedIn} backHandlerRef={backHandlerRef} />
+								: <Login onLoggedIn={handleLoggedIn} backHandlerRef={backHandlerRef} />}
 						</Panel>
 						{/* Home's place in the panel order, it's drawn by the layer after the panels. */}
 						<Panel />
@@ -2608,7 +2618,11 @@ const AppContent = (props) => {
 							)}
 						</Panel>
 						<Panel>
-							{panelIndex === PANELS.ADD_SERVER && (
+							{/* FLUXER: añadir = el código de Fluxer */}
+							{FLUXER_ONLY && panelIndex === PANELS.ADD_SERVER && (
+								<FluxerLogin onLoggedIn={handleLoggedIn} onBack={handleBack} backHandlerRef={backHandlerRef} />
+							)}
+							{!FLUXER_ONLY && panelIndex === PANELS.ADD_SERVER && (
 								<Login
 									onLoggedIn={handleLoggedIn}
 									onServerAdded={handleServerAdded}
@@ -2618,7 +2632,10 @@ const AppContent = (props) => {
 							)}
 						</Panel>
 						<Panel>
-							{panelIndex === PANELS.ADD_USER && (
+							{FLUXER_ONLY && panelIndex === PANELS.ADD_USER && ( // FLUXER
+								<FluxerLogin onLoggedIn={handleLoggedIn} onBack={handleBack} backHandlerRef={backHandlerRef} />
+							)}
+							{!FLUXER_ONLY && panelIndex === PANELS.ADD_USER && (
 								<Login
 									onLoggedIn={handleLoggedIn}
 									onServerAdded={handleServerAdded}
@@ -2795,6 +2812,8 @@ const AppContent = (props) => {
 					onClose={handleCopyPickClosed}
 				/>
 			)}
+			{/* FLUXER */}
+			{FLUXER_ONLY && <FluxerLinkGate activeRef={fluxerGateRef} onLoggedIn={handleLoggedIn} onSwitchUser={handleSignedOut} />}
 			<AccountModal
 				open={showAccountModal}
 				onClose={handleCloseAccountModal}

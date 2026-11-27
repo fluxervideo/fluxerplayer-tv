@@ -17,6 +17,7 @@ import {parseUrl} from '../utils/urlCompat';
 import {noteProvedSignIn} from '../utils/signInPin';
 import {bestPlexAddress} from '../services/plexTv';
 import {onSiloSessionEnded, onSiloTokensRotated, siloServerKey, siloSessionFor} from '../services/siloSession';
+import {FLUXER_ONLY} from '../fluxer/fluxerConfig'; // FLUXER
 
 const REVALIDATE_INTERVAL = 5 * 60 * 1000;
 
@@ -184,7 +185,8 @@ export const AuthProvider = ({children}) => {
 				// only had the on off toggle.
 				const behavior = storedSettings?.autoLoginBehavior ||
 					(storedSettings?.autoLogin === false ? 'disabled' : 'lastUser');
-				const autoLogin = behavior !== 'disabled' && storedSettings?.alwaysAuthenticate !== true;
+				// FLUXER: sin contraseña de Emby, «Siempre autenticar» no cuenta.
+				const autoLogin = behavior !== 'disabled' && (FLUXER_ONLY || storedSettings?.alwaysAuthenticate !== true);
 
 				let restoreTarget = active;
 				if (behavior === 'currentUser' && storedSettings?.autoLoginUserId) {

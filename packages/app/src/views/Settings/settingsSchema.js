@@ -1,4 +1,6 @@
 import $L from '@enact/i18n/$L';
+import {FLUXER_ONLY} from '../../fluxer/fluxerConfig'; // FLUXER
+import {fs} from '../../fluxer/fluxerStrings'; // FLUXER
 import {isSignInPinEnabled} from '../../utils/signInPin';
 import {isTrickplayOn} from '../../utils/trickplayLayout';
 import {mediaPreviewMode, mediaPreviewSettings} from '../../utils/mediaPreviewMode';
@@ -273,8 +275,9 @@ export const SETTINGS_SCHEMA = [
 				description: () => $L('Sign-in, PIN code, Kids Mode, parental controls, and settings sync'),
 				rows: [
 					{kind: KIND.SECTION, id: 'signIn', label: () => $L('Sign-in')},
-					{kind: KIND.OPTION, key: 'autoLoginBehavior', label: () => $L('Auto Login'), options: getAutoLoginOptions, fallback: () => $L('Last User'), icon: 'person'},
-					{kind: KIND.TOGGLE, key: 'alwaysAuthenticate', label: () => $L('Always Authenticate'), desc: () => $L('Require password even with stored token'), icon: 'lock'},
+					// FLUXER: «Al abrir la app» y sin «Siempre autenticar».
+					{kind: KIND.OPTION, key: 'autoLoginBehavior', label: () => (FLUXER_ONLY ? fs.autoLoginTitle : $L('Auto Login')), options: getAutoLoginOptions, fallback: () => (FLUXER_ONLY ? fs.autoLoginLastUser : $L('Last User')), icon: 'person'},
+					{kind: KIND.TOGGLE, key: 'alwaysAuthenticate', label: () => $L('Always Authenticate'), desc: () => $L('Require password even with stored token'), icon: 'lock', when: () => !FLUXER_ONLY},
 					{kind: KIND.NAV, id: 'pinCodeSettings', label: () => $L('PIN Code'), desc: () => $L('Require a PIN to access your account'), icon: 'pin', action: (ctx) => ctx.actions.openScreen('account', 'pinCode', 'setting-pinCodeSettings')},
 					{kind: KIND.SECTION, id: 'family', label: () => $L('Family')},
 					{

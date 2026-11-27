@@ -1,0 +1,117 @@
+// FluxerPlayer: estilos propios. Lo común viene de views/Login/Login.module.less.
+@import '../styles/mixins.less';
+
+@accent: var(--theme-accent, #00a4dc);
+@fg: var(--theme-on-surface, #fff);
+@onAccent: #04151c;
+
+.fg(@alpha) {
+	color: rgba(var(--theme-on-surface-rgb, 255, 255, 255), @alpha);
+}
+
+.subtitle {
+	margin: (6 * @dp) 0 (20 * @dp);
+	font-size: (15 * @dp);
+	.fg(0.7);
+}
+
+.steps {
+	text-align: left;
+}
+
+.step {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+	font-size: (15 * @dp);
+	.fg(0.75);
+}
+
+.stepNumber {
+	-webkit-flex: 0 0 auto;
+	flex: 0 0 auto;
+	width: (24 * @dp);
+	height: (24 * @dp);
+	margin-right: (10 * @dp);
+	border-radius: 50%;
+	background: @accent;
+	color: @onAccent;
+	font-size: (13 * @dp);
+	font-weight: 700;
+	line-height: (24 * @dp);
+	text-align: center;
+}
+
+.stepBody {
+	padding: (4 * @dp) 0 (14 * @dp) (34 * @dp);
+}
+
+.link {
+	font-size: (16 * @dp);
+	font-weight: 600;
+	color: @accent;
+}
+
+.code {
+	display: inline-block;
+	padding: (8 * @dp) (18 * @dp);
+	border: (1 * @dp) solid rgba(255, 255, 255, 0.14);
+	border-radius: (12 * @dp);
+	background: rgba(255, 255, 255, 0.06);
+	font-size: (38 * @dp);
+	font-weight: 800;
+	letter-spacing: (6 * @dp);
+	font-family: monospace;
+	color: @fg;
+}
+
+.waiting {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+	margin-top: (4 * @dp);
+	font-size: (13 * @dp);
+	.fg(0.6);
+
+	> :first-child {
+		width: (14 * @dp);
+		height: (14 * @dp);
+		margin-right: (10 * @dp);
+	}
+}
+
+.error {
+	margin-top: (14 * @dp);
+	font-size: (14 * @dp);
+	text-align: center;
+	color: var(--theme-recording-active, #ef4444);
+}
+
+.center {
+	padding: (28 * @dp) 0;
+	text-align: center;
+}
+
+.centerLabel {
+	margin-top: (12 * @dp);
+	font-size: (15 * @dp);
+	.fg(0.8);
+}
+
+// Por encima de toda la app (FluxerLinkGate).
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 900;
+	overflow: auto;
+	background: var(--theme-background, #0b0f1e);
+}
